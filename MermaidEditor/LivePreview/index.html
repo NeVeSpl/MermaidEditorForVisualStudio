@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>	
+    <style>
+        body{
+            margin : 0;
+        }
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #busyIndicator {
+            text-align: center;
+        }
+
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+        #mermaidErrors{
+            color: red;
+        }
+        svg, img, canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="busyIndicator">
+        <div class="loader">
+
+        </div>
+    </div>
+
+    <textarea rows="10" cols="100" id="myCode" style="display : none">
+    graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server01]
+    B --> D[Server02]
+    </textarea>
+
+    <pre id="mermaidErrors">
+
+    </pre>
+
+    <h3>svg:</h3>
+
+    <div id="mermaidGraph">
+
+    </div>
+
+    <h3>png:</h3>
+  
+    <canvas></canvas>   
+    
+
+    <script src="mermaid.js"></script> 
+    <script>       
+        const sendMessage = function (msg) {
+            window.chrome.webview.postMessage(msg);
+        }  
+
+        function updateGraph(graphDefinition) {
+            var busyIndicatorElement = document.getElementById("busyIndicator");
+            busyIndicatorElement.style.display = "none";
+
+            var myGraph = document.querySelector("#mermaidGraph");
+            var myErrors = document.querySelector("#mermaidErrors");
+
+            var insertSvg = function (svgCode, bindFunctions) {
+                myGraph.innerHTML = svgCode;
+            };
+
+            try
+            {
+                if (mermaid.parse(graphDefinition))
+                {
+                    var graph = mermaid.mermaidAPI.render('mermaidGraphInSVG', graphDefinition, insertSvg);
+                    myErrors.style.display = "none";
+                    getPNG();
+                }
+            }
+            catch (error)
+            {
+                myErrors.style.display = "block";
+                myErrors.innerHTML = error.str;
+            }
+        }        
+      
+        const codeElement = document.getElementById('myCode');
+        codeElement.addEventListener('input', (e) => updateGraph(e.target.value));
+
+
+        function drawInlineSVG(svgElement, ctx)
+        {
+            return new Promise((resolve, reject) =>
+            {
+                var svgURL = new XMLSerializer().serializeToString(svgElement);
+                var img = new Image();
+
+                img.onload = function () {
+                    ctx.drawImage(this, 0, 0);
+                    resolve();
+                }
+                img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgURL);
+            })
+        }
+
+        async function getPNG()
+        {
+            var svgElem = document.querySelector('svg');
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext("2d");
+
+            canvas.width = svgElem.clientWidth;
+            canvas.height = svgElem.clientHeight;
+
+            await drawInlineSVG(svgElem, ctx);
+            var img = canvas.toDataURL("image/png");
+            console.log(img);
+            sendMessage(img);
+
+            return img;
+        }
+
+        mermaid.parseError = () => { console.log("Maybe some day this will work ...."); };
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="Mermaid.EditorForVisualStudio.e5c82390-1fc1-4d02-8b2d-d732b369ffc6" Version="0.1" Language="en-US" Publisher="NeVeS" />
+        <DisplayName>Mermaid editor for visual studio</DisplayName>
+        <Description xml:space="preserve">Versy simple editor for Mermaid files(*.mmd). It only offers live preview and generates diagrams in *.svg and *.png formats.</Description>
+        <MoreInfo>https://github.com/NeVeSpl/MermaidEditorForVisualStudio</MoreInfo>
+        <Icon>Resources\MermaidEditorForVisualStudio.Logo.png</Icon>
+        <Tags>mermaid, diagram-generation, documentation as code, live documentation, static file generator</Tags>
+        <Preview>true</Preview>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+    </Assets>
+</PackageManifest>
