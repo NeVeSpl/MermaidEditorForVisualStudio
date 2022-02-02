@@ -2,8 +2,9 @@
 <html>
 <head>	
     <style>
-        body{
-            margin : 0;
+        body {
+            margin: 0;
+            width: fit-content;
         }
         .loader {
             border: 16px solid #f3f3f3; /* Light grey */
@@ -52,6 +53,7 @@
     </div>
 
     <textarea rows="10" cols="100" id="myCode" style="display : none">
+    <textarea rows="10" cols="20" id="myCode" style="display : block">
     graph TD
     A[Client] --> B[Load Balancer]
     B --> C[Server01]

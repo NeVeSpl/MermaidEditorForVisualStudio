@@ -28,7 +28,7 @@ namespace MermaidEditor.LivePreview
         {            
             ITextDocument document = wpfTextViewHost.TextView.TextDataModel.DocumentBuffer.GetTextDocument();
             
-            return wpfTextViewHost.TextView.Properties.GetOrCreateSingletonProperty(() => new LivePreviewMargin(wpfTextViewHost.TextView, wpfTextViewHost.TextView.TextSnapshot.GetText()));
+            return wpfTextViewHost.TextView.Properties.GetOrCreateSingletonProperty(() => new LivePreviewMargin(wpfTextViewHost.TextView));
             
             
         }
