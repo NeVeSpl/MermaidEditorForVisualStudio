@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Text;
@@ -18,16 +19,15 @@ namespace MermaidEditor.LivePreview
     public partial class LivePreviewMargin : UserControl, IWpfTextViewMargin, INotifyPropertyChanged
     {
         private readonly IWpfTextView textView;
-        private readonly string startupText;
-        
+        private readonly string startupText;        
         private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");            
 
 
         public LivePreviewMargin(IWpfTextView textView) : this(textView.TextSnapshot.GetText())
         {
             this.textView = textView;
-            this.textView.TextBuffer.PostChanged += TextBuffer_PostChanged;
-        }
+            this.textView.TextBuffer.PostChanged += TextBuffer_PostChanged;           
+        }        
         public LivePreviewMargin(string startupText) : this()
         {
             this.startupText = startupText;
@@ -35,33 +35,41 @@ namespace MermaidEditor.LivePreview
         public LivePreviewMargin()
         {
             InitializeComponent();
-            InitializeAsync();
+            this.Loaded += LivePreviewMargin_Loaded;           
             this.DataContext = this;
         }
-        
+       
 
-        async void InitializeAsync()
+        bool isInitialized = false;
+        private void LivePreviewMargin_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (isInitialized == false)
+            {
+                InitializeAsync().Forget();
+                isInitialized = true;
+            }
+        }
+     
+
+        async Task InitializeAsync()
         {
             try
             {
-                DebugWriteLine($"0 CoreWebView2Environment.CreateAsync");
-                var env = await CoreWebView2Environment.CreateAsync(userDataFolder: TempPath);
-
-                DebugWriteLine($"1 EnsureCoreWebView2Async");               
+                DebugWriteLine($"0 InitializeAsync BEGIN");
+                var env = await CoreWebView2Environment.CreateAsync(userDataFolder: TempPath);                 
                 await cWebView.EnsureCoreWebView2Async(env);
 
-                DebugWriteLine($"2 SetVirtualHostNameToFolderMapping");
+                DebugWriteLine($"1 EnsureCoreWebView2Async END");
                 var webViewRes = Path.Combine(Path.GetDirectoryName(typeof(LivePreviewMargin).Assembly.Location), "LivePreview");
-                cWebView.CoreWebView2.SetVirtualHostNameToFolderMapping("wvresources", webViewRes, CoreWebView2HostResourceAccessKind.Allow);
-
-                DebugWriteLine($"3 cWebView.Source");
-                cWebView.Source = new Uri("http://wvresources/index.html"); 
+                cWebView.CoreWebView2.SetVirtualHostNameToFolderMapping("mermaideditor.example", webViewRes, CoreWebView2HostResourceAccessKind.Allow);
+               
+                cWebView.Source = new Uri("http://mermaideditor.example/index.html"); 
           
                 cWebView.NavigationCompleted += WebView_NavigationCompleted;
                 cWebView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
                 cWebView.WebMessageReceived += CWebView_WebMessageReceived;
 
-                DebugWriteLine($"4 InitializeAsync end");
+                DebugWriteLine($"2 InitializeAsync END");
             }
             catch (WebView2RuntimeNotFoundException)
             {
@@ -72,25 +80,48 @@ namespace MermaidEditor.LivePreview
 
         private void CoreWebView2_DOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
         {
-            DebugWriteLine($"? CoreWebView2_DOMContentLoaded");
+            DebugWriteLine($"3 CoreWebView2_DOMContentLoaded");
         }
         private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            DebugWriteLine($"? WebView_NavigationCompleted");
+            DebugWriteLine($"4 WebView_NavigationCompleted");
             UpdateWebView(startupText);
         }
 
 
+        private void TextBuffer_PostChanged(object sender, EventArgs e)
+        {
+            if (textView.IsTextViewAvailable())
+            {
+                var text = this.textView.TextSnapshot.GetText();
+                UpdateWebView(text);
+            }
+        }
+        public void UpdateWebView(string text)
+        {
+            if (cWebView.CoreWebView2 != null)
+            {
+                var enc = JsonEncodedText.Encode(text);
+                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\");").Forget();
+            }
+        }
 
+
+        private async void SaveAsPNG_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (textView.IsTextViewAvailable() && cWebView.CoreWebView2 != null)
+            {
+                var dataUrl = await cWebView.ExecuteScriptAsync($"getPNG();"); // result will be delivered through CWebView_WebMessageReceived
+            }
+        }
         private void CWebView_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             string dataUrl = e.TryGetWebMessageAsString();
             SaveImage(dataUrl);
         }
-
         private void SaveImage(string dataUrl)
         {
-            if (textView != null)
+            if (textView.IsTextViewAvailable())
             {
                 var mmdPath = textView.TextBuffer.GetFileName();
                 var pngPath = Path.ChangeExtension(mmdPath, "png");
@@ -98,7 +129,7 @@ namespace MermaidEditor.LivePreview
                 if (!string.IsNullOrEmpty(dataUrl) && dataUrl != "null" && dataUrl != "{}")
                 {
                     var base64Data = dataUrl.Remove(0, "data:image/png;base64,".Length);
-                    var img = ConvertBase64ToImage(base64Data);
+                    var img = base64Data.ConvertBase64ToImage();
                     try
                     {
                         img.Save(pngPath);
@@ -110,32 +141,6 @@ namespace MermaidEditor.LivePreview
             }
         }     
 
-        private void TextBuffer_PostChanged(object sender, EventArgs e)
-        {
-            if (this.textView != null)
-            {
-                if (textView.IsClosed != true)
-                {
-                    var text = this.textView.TextSnapshot.GetText();
-                    UpdateWebView(text);
-                }
-            }
-        }     
-        public void UpdateWebView(string text)
-        {            
-            if (cWebView.CoreWebView2 != null)
-            {
-                var enc = JsonEncodedText.Encode(text);
-                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\");").Forget();
-            }            
-        }
-
-
-        private void DebugWriteLine(string text)
-        {
-            Debug.WriteLine($"===> {text} " + DateTimeOffset.Now.ToString("MM/dd/yyyy hh:mm:ss.fff"));
-        }
-
 
         #region IWpfTextViewMargin
         public FrameworkElement VisualElement => this;
@@ -144,7 +149,11 @@ namespace MermaidEditor.LivePreview
 
         public void Dispose()
         {
-            
+            textView.TextBuffer.PostChanged -= TextBuffer_PostChanged;
+            if (cWebView.CoreWebView2 != null)
+            {
+                cWebView.Dispose();
+            }
         }
 
         public ITextViewMargin GetTextViewMargin(string marginName)
@@ -181,19 +190,8 @@ namespace MermaidEditor.LivePreview
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
-
-
-       
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (textView != null && cWebView.CoreWebView2 != null)
-            {             
-                var dataUrl = await cWebView.ExecuteScriptAsync($"getPNG();"); // result will be delivered through CWebView_WebMessageReceived
-            }
-        }
-
-        public System.Drawing.Image ConvertBase64ToImage(string base64)    => (Bitmap)new ImageConverter().ConvertFrom(Convert.FromBase64String(base64));
+        #endregion     
+        
+        private void DebugWriteLine(string text) =>  Debug.WriteLine($"===> {text} " + DateTimeOffset.Now.ToString("hh:mm:ss.fff")); 
     }
 }
