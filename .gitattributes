@@ -2,3 +2,5 @@
 *.js linguist-detectable=true
 *.html linguist-detectable=true
  *.cs linguist-language=C#
+ MermaidEditor/LivePreview/mermaid.js linguist-vendored
+ MermaidEditor/LivePreview/mermaid.js.html linguist-vendored
