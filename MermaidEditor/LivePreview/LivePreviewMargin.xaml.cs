@@ -125,10 +125,11 @@ namespace MermaidEditor.LivePreview
             {
                 var mmdPath = textView.TextBuffer.GetFileName();
                 var pngPath = Path.ChangeExtension(mmdPath, "png");
+                var prefixLength = "data:image/png;base64,".Length;
 
-                if (!string.IsNullOrEmpty(dataUrl) && dataUrl != "null" && dataUrl != "{}")
+                if (!string.IsNullOrEmpty(dataUrl) && dataUrl != "null" && dataUrl != "{}" && dataUrl.Length > prefixLength)
                 {
-                    var base64Data = dataUrl.Remove(0, "data:image/png;base64,".Length);
+                    var base64Data = dataUrl.Remove(0, prefixLength);
                     var img = base64Data.ConvertBase64ToImage();
                     try
                     {

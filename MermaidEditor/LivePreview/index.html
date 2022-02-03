@@ -43,6 +43,9 @@
         svg, img, canvas {
             display: block;
         }
+        #ui{
+            display : none;
+        }
     </style>
 </head>
 <body>
@@ -52,27 +55,28 @@
         </div>
     </div>
 
-    <textarea rows="10" cols="100" id="myCode" style="display : none">    
+    <div id="ui">
+        <textarea rows="10" cols="100" id="myCode" style="display : none">    
     graph TD
     A[Client] --> B[Load Balancer]
     B --> C[Server01]
     B --> D[Server02]
     </textarea>
 
-    <pre id="mermaidErrors">
+        <pre id="mermaidErrors">
 
     </pre>
 
-    <h3>svg:</h3>
+        <h3>svg:</h3>
 
-    <div id="mermaidGraph">
+        <div id="mermaidGraph">
 
+        </div>
+
+        <h3>png:</h3>
+
+        <canvas></canvas>
     </div>
-
-    <h3>png:</h3>
-  
-    <canvas></canvas>   
-    
 
     <script src="mermaid.js"></script> 
     <script>       
@@ -81,13 +85,15 @@
         }  
 
         function updateGraph(graphDefinition) {
-            var busyIndicatorElement = document.getElementById("busyIndicator");
+            const busyIndicatorElement = document.getElementById("busyIndicator");
             busyIndicatorElement.style.display = "none";
+            const uiElement = document.getElementById("ui");
+            uiElement.style.display = "block";
 
-            var myGraph = document.querySelector("#mermaidGraph");
-            var myErrors = document.querySelector("#mermaidErrors");
+            const myGraph = document.querySelector("#mermaidGraph");
+            const myErrors = document.querySelector("#mermaidErrors");
 
-            var insertSvg = function (svgCode, bindFunctions) {
+            const insertSvg = function (svgCode, bindFunctions) {
                 myGraph.innerHTML = svgCode;
             };
 
@@ -132,8 +138,10 @@
             var canvas = document.querySelector('canvas');
             var ctx = canvas.getContext("2d");
 
-            canvas.width = svgElem.clientWidth;
-            canvas.height = svgElem.clientHeight;
+            const { x, y, width, height } = svgElem.viewBox.baseVal;
+
+            canvas.width = width ?? svgElem.clientWidth;
+            canvas.height = height ?? svgElem.clientHeight;
 
             await drawInlineSVG(svgElem, ctx);
             var img = canvas.toDataURL("image/png");

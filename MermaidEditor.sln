@@ -5,6 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MermaidEditor", "MermaidEditor\MermaidEditor.csproj", "{529D93B8-6C6D-47CB-8077-009CCEBBADFA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{E688F05A-569C-42E1-9BDB-71A1902487A8}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\MermaidEditorForVisualStudio.sampleusecase.gif = Documentation\MermaidEditorForVisualStudio.sampleusecase.gif
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
