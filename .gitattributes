@@ -1,0 +1,4 @@
+*.cs linguist-detectable=true
+*.js linguist-detectable=true
+*.html linguist-detectable=true
+ *.cs linguist-language=C#
