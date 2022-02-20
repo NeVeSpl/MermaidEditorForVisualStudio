@@ -103,7 +103,7 @@
                 {
                     var graph = mermaid.mermaidAPI.render('mermaidGraphInSVG', graphDefinition, insertSvg);
                     myErrors.style.display = "none";
-                    getPNG();
+                    getPNG(false);
                 }
             }
             catch (error)
@@ -132,8 +132,7 @@
             })
         }
 
-        async function getPNG()
-        {
+        async function getPNG(save = true) {
             var svgElem = document.querySelector('svg');
             var canvas = document.querySelector('canvas');
             var ctx = canvas.getContext("2d");
@@ -146,8 +145,10 @@
             await drawInlineSVG(svgElem, ctx);
             var img = canvas.toDataURL("image/png");
             console.log(img);
-            sendMessage(img);
-
+            if (save)
+            {           
+                sendMessage(img);
+            }
             return img;
         }
 
