@@ -152,7 +152,16 @@
             return img;
         }
 
-        mermaid.parseError = () => { console.log("Maybe some day this will work ...."); };
+        mermaid.parseError = (error, hash) =>
+        {
+            console.log("mermaid.parseError \r\n");
+            console.log(error);
+            console.log("\r\n");
+            console.log(JSON.stringify(error));
+            const myErrors = document.querySelector("#mermaidErrors");
+            myErrors.style.display = "block";
+            myErrors.innerHTML = error;
+        };
     </script>
 </body>
 </html>
