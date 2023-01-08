@@ -6,7 +6,7 @@ Very simple editor for Mermaid files(*.mmd) in Visual Studio. You can download i
 - live preview 
 - generates diagrams in *.svg and *.png formats. 
 - syntax highlighting
-- show parsing errors
+- displays parsing errors
 
 ![NTypewriter LivePreview](Documentation/MermaidEditorForVisualStudio.sampleusecase.gif)
 
