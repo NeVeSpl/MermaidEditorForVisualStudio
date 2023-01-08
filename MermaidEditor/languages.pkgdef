@@ -1,0 +1,3 @@
+﻿; Registering the TextMate grammar
+[$RootKey$\TextMate\Repositories]
+"MermaidEditorMMD"="$PackageFolder$\Syntaxes\Mermaid"

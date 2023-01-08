@@ -15,6 +15,7 @@ namespace MermaidEditor
         [DisplayName("Mermaid editor file")]
         [Name(MMD)]
         [BaseDefinition("code")]
+        [BaseDefinition(CommonEditorConstants.ContentTypeName)]
         internal static ContentTypeDefinition MDDefinition = null;
 
         [Export]
