@@ -20,7 +20,22 @@ namespace MermaidEditor.LivePreview
     {
         private readonly IWpfTextView textView;
         private readonly string startupText;        
-        private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");            
+        private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");
+        private string selectedExt = "svg";
+
+        public string SelectedExt
+        {
+            get
+            {
+                return selectedExt;
+            }
+            set
+            {
+                selectedExt = value;
+                OnPropertyChanged();
+                TextBuffer_PostChanged(null, null);
+            }
+        }
 
 
         public LivePreviewMargin(IWpfTextView textView) : this(textView.TextSnapshot.GetText())
@@ -102,7 +117,7 @@ namespace MermaidEditor.LivePreview
             if (cWebView.CoreWebView2 != null)
             {
                 var enc = JsonEncodedText.Encode(text);
-                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\");").Forget();
+                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\", \"{SelectedExt}\");").Forget();
             }
         }
 
@@ -146,8 +161,7 @@ namespace MermaidEditor.LivePreview
         #region IWpfTextViewMargin
         public FrameworkElement VisualElement => this;
         public double MarginSize => this.Width;
-        public bool Enabled => this.Enabled;
-
+        public bool Enabled => this.Enabled;        
         public void Dispose()
         {
             textView.TextBuffer.PostChanged -= TextBuffer_PostChanged;

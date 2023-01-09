@@ -18,14 +18,18 @@
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.3*" MinWidth="30"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 
-                <Button Content="Save *.png file next to *.mmd file" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="SaveAsPNG_Button_Click" />
+                <Button Content="Save *.png file next to *.mmd file" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Click="SaveAsPNG_Button_Click" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Margin="7 0 0 0" SelectedValuePath="Content" SelectedValue="{Binding SelectedExt, Mode=TwoWay}">                    
+                    <ComboBoxItem Content="svg" />
+                    <ComboBoxItem Content="png" />
+                </ComboBox>
             </Grid>
             <TextBlock TextWrapping="Wrap" x:Name="cMsgWebView2NotInstalled" Visibility="Collapsed" DockPanel.Dock="Top">      
                 <Run>To see preview you need to have installed WebView2 Runtime from </Run>

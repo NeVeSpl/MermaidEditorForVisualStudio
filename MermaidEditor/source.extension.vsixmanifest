@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Mermaid.EditorForVisualStudio.e5c82390-1fc1-4d02-8b2d-d732b369ffc6" Version="9.3.0.2" Language="en-US" Publisher="NeVeS" />
-        <DisplayName>Mermaid editor for visual studio</DisplayName>
+        <Identity Id="Mermaid.EditorForVisualStudio.e5c82390-1fc1-4d02-8b2d-d732b369ffc6" Version="9.3.0.3" Language="en-US" Publisher="NeVeS" />
+        <DisplayName>Mermaid editor for Visual Studio</DisplayName>
         <Description xml:space="preserve">Very simple editor for Mermaid files(*.mmd). It only offers live preview and generates diagrams in *.svg and *.png formats.</Description>
         <MoreInfo>https://github.com/NeVeSpl/MermaidEditorForVisualStudio</MoreInfo>
         <Icon>Resources\MermaidEditorForVisualStudio.Logo.png</Icon>
