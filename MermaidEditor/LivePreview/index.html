@@ -73,94 +73,117 @@
             </div>
         </div>
 
-        <div id="pngContainer">  
+        <div id="pngContainer">
             <canvas></canvas>
         </div>
     </div>
+    <!--<script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.2-rc.1/dist/mermaid.js"></script>-->
+    <!--<script src="mermaid.js"></script>-->
+    <script type="module">
+        /*import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.0/+esm'*/
+        import mermaid from 'http://mermaideditor.example/mermaid.10.0.0/mermaid.esm.mjs'
+        mermaid.initialize({ startOnLoad: false });
 
-        <script src="mermaid.js"></script>
-        <script>
-            const sendMessage = function (msg) {
-                window.chrome.webview.postMessage(msg);
-            }
+        const sendMessage = function (msg) {
+            window.chrome.webview.postMessage(msg);
+        }
 
-            function updateGraph(graphDefinition, imageExt)
+        export async function updateGraph(graphDefinition, imageExt) {
+            console.log("updateGraph invoked()")
+
+            const svgContainerElement = document.getElementById("svgContainer");
+            const pngContainerElement = document.getElementById("pngContainer");
+            svgContainerElement.style.display = imageExt == "png" ? "none" : "block";
+            pngContainerElement.style.display = imageExt == "svg" ? "none" : "block";
+
+            const busyIndicatorElement = document.getElementById("busyIndicator");
+            busyIndicatorElement.style.display = "none";
+            const uiElement = document.getElementById("ui");
+            uiElement.style.display = "block";
+
+            const myGraph = document.querySelector("#mermaidGraph");
+            const myErrors = document.querySelector("#mermaidErrors");
+
+            try
             {
-                const svgContainerElement = document.getElementById("svgContainer");
-                const pngContainerElement = document.getElementById("pngContainer");
-                svgContainerElement.style.display = imageExt == "png" ? "none" : "block";
-                pngContainerElement.style.display = imageExt == "svg" ? "none" : "block";
-
-                const busyIndicatorElement = document.getElementById("busyIndicator");
-                busyIndicatorElement.style.display = "none";
-                const uiElement = document.getElementById("ui");
-                uiElement.style.display = "block";
-
-                const myGraph = document.querySelector("#mermaidGraph");
-                const myErrors = document.querySelector("#mermaidErrors");
-
-                const insertSvg = function (svgCode, bindFunctions) {
-                    myGraph.innerHTML = svgCode;
-                };
-
-                try {
-                    if (mermaid.parse(graphDefinition)) {
-                        var graph = mermaid.mermaidAPI.render('mermaidGraphInSVG', graphDefinition, insertSvg);
-                        myErrors.style.display = "none";
-                        getPNG(false);
-                    }
-                }
-                catch (error) {
-                    myErrors.style.display = "block";
-                    myErrors.innerHTML = error.str;
-                }
+                console.log("mermaid.parse");
+                await mermaid.parse(graphDefinition);
             }
-
-            const codeElement = document.getElementById('myCode');
-            codeElement.addEventListener('input', (e) => updateGraph(e.target.value, "svg"));
-
-
-            function drawInlineSVG(svgElement, ctx) {
-                return new Promise((resolve, reject) => {
-                    var svgURL = new XMLSerializer().serializeToString(svgElement);
-                    var img = new Image();
-
-                    img.onload = function () {
-                        ctx.drawImage(this, 0, 0);
-                        resolve();
-                    }
-                    img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgURL);
-                })
-            }
-
-            async function getPNG(save = true) {
-                var svgElem = document.querySelector('svg');
-                var canvas = document.querySelector('canvas');
-                var ctx = canvas.getContext("2d");
-
-                const { x, y, width, height } = svgElem.viewBox.baseVal;
-
-                canvas.width = width ?? svgElem.clientWidth;
-                canvas.height = height ?? svgElem.clientHeight;
-
-                await drawInlineSVG(svgElem, ctx);
-                var img = canvas.toDataURL("image/png");
-                console.log(img);
-                if (save) {
-                    sendMessage(img);
-                }
-                return img;
-            }
-
-            mermaid.parseError = (error, hash) => {
-                console.log("mermaid.parseError \r\n");
-                console.log(error);
-                console.log("\r\n");
+            catch (error)
+            {                
+                console.log("mermaid.parse -> catch (error) \r\n");
                 console.log(JSON.stringify(error));
-                const myErrors = document.querySelector("#mermaidErrors");
-                myErrors.style.display = "block";
-                myErrors.innerHTML = error;
-            };
-        </script>
+                //console.log(mermaid.parseError(error));
+            }
+
+            try
+            {
+                 console.log("mermaid.mermaidAPI.render start");
+                 let graph = await mermaid.mermaidAPI.render('mermaidGraphInSVG', graphDefinition);
+                 //console.log(JSON.stringify(graph));                
+                 myGraph.innerHTML = graph.svg;
+                 myErrors.style.display = "none";
+                 getPNG(false);                
+            }
+            catch (error)
+            {
+                console.log("mermaid.mermaidAPI.render -> catch (error) \r\n");
+                console.log(JSON.stringify(error));
+                //console.log(mermaid.parseError(error));
+            }
+        }
+
+        window.updateGraph = updateGraph;
+
+        const codeElement = document.getElementById('myCode');
+        codeElement.addEventListener('input', (e) => updateGraph(e.target.value, "svg"));
+
+
+        function drawInlineSVG(svgElement, ctx) {
+            return new Promise((resolve, reject) => {
+                var svgURL = new XMLSerializer().serializeToString(svgElement);
+                var img = new Image();
+
+                img.onload = function () {
+                    ctx.drawImage(this, 0, 0);
+                    resolve();
+                }
+                img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgURL);
+            })
+        }
+
+        async function getPNG(save = true) {
+            var svgElem = document.querySelector('svg');
+            var canvas = document.querySelector('canvas');
+            var ctx = canvas.getContext("2d");
+
+            const { x, y, width, height } = svgElem.viewBox.baseVal;
+
+            canvas.width = width ?? svgElem.clientWidth;
+            canvas.height = height ?? svgElem.clientHeight;
+
+            await drawInlineSVG(svgElem, ctx);
+            var img = canvas.toDataURL("image/png");
+            //console.log(img);
+            if (save) {
+                sendMessage(img);
+            }
+            return img;
+        }
+
+        mermaid.parseError = (error, hash) => {
+            console.log("mermaid.parseError \r\n");
+            console.log(error);
+            console.log("\r\n");
+            console.log(JSON.stringify(error));
+            const myErrors = document.querySelector("#mermaidErrors");
+            myErrors.style.display = "block";
+            myErrors.innerHTML = error;
+        };
+
+        console.log("script end")
+    </script>
+  
+
 </body>
 </html>
