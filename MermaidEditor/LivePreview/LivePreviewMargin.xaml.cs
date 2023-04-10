@@ -21,7 +21,7 @@ namespace MermaidEditor.LivePreview
         private readonly IWpfTextView textView;
         private readonly string startupText;        
         private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");
-        private string selectedExt = "svg";
+        private string selectedExt = "png";
 
         public string SelectedExt
         {
