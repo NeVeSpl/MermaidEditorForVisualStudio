@@ -111,14 +111,13 @@
     <Content Include="LivePreview\index.html">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
- 
     <Content Include="Resources\MermaidEditorForVisualStudio.Logo.png">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-   <Content Include="LivePreview\mermaid.10.1.0\*.*">
+    <Content Include="LivePreview\mermaid.10.1.0\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
