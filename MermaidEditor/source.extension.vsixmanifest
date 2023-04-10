@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="Mermaid.EditorForVisualStudio.e5c82390-1fc1-4d02-8b2d-d732b369ffc6" Version="10.0.0.0" Language="en-US" Publisher="NeVeS" />
         <DisplayName>Mermaid editor for Visual Studio</DisplayName>
-        <Description xml:space="preserve">Very simple editor for Mermaid files(*.mmd). It only offers live preview and generates diagrams in *.svg and *.png formats.</Description>
+        <Description xml:space="preserve">A very simple editor for Mermaid files(*.mmd, *.mermaid). It offers live preview, syntax highlighting and generates diagrams in *.svg and *.png formats.</Description>
         <MoreInfo>https://github.com/NeVeSpl/MermaidEditorForVisualStudio</MoreInfo>
         <Icon>Resources\MermaidEditorForVisualStudio.Logo.png</Icon>
         <Tags>mermaid, diagram-generation, documentation as code, live documentation, static file generator, mmd</Tags>

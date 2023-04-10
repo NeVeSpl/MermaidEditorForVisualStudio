@@ -9,8 +9,6 @@ namespace MermaidEditor
         public const string MMD = "mmd";
 
 
-
-
         [Export]
         [DisplayName("Mermaid editor file")]
         [Name(MMD)]
@@ -21,6 +19,11 @@ namespace MermaidEditor
         [Export]
         [FileExtension(".mmd")]
         [ContentType(MMD)]
-        internal static FileExtensionToContentTypeDefinition FileExtensionToMMDDefinition = null;
+        internal static FileExtensionToContentTypeDefinition FileExtension1ToMMDDefinition = null;
+
+        [Export]
+        [FileExtension(".mermaid")]
+        [ContentType(MMD)]
+        internal static FileExtensionToContentTypeDefinition FileExtension2ToMMDDefinition = null;
     }
 }
