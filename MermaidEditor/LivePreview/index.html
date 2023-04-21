@@ -152,7 +152,10 @@
             })
         }
 
-        async function getPNG(save = true) {
+        export async function getPNG(save = true)
+        {
+            console.log(`getPNG(${save})`);
+
             var svgElem = document.querySelector('svg');
             var canvas = document.querySelector('canvas');
             var ctx = canvas.getContext("2d");
@@ -164,12 +167,13 @@
 
             await drawInlineSVG(svgElem, ctx);
             var img = canvas.toDataURL("image/png");
-            //console.log(img);
+            console.log(img);
             if (save) {
                 sendMessage(img);
             }
             return img;
         }
+        window.getPNG = getPNG;
 
         mermaid.parseError = (error, hash) => {
             console.log("mermaid.parseError \r\n");
