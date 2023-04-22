@@ -46,8 +46,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="ContentTypeAndFileExtensionDefinitions.cs" />
     <Compile Include="Extensions\Microsoft.VisualStudio.Text.Editor\IWpfTextViewExtensions.cs" />
+    <Compile Include="Extensions\Microsoft.Web.WebView2.Core\WebView2Extensions.cs" />
     <Compile Include="Extensions\System\StringExtensions.cs" />
     <Compile Include="LivePreview\LivePreviewMargin.xaml.cs">
       <DependentUpon>LivePreviewMargin.xaml</DependentUpon>
@@ -55,6 +58,7 @@
     <Compile Include="LivePreview\LivePreviewMarginProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MermaidEditorPackage.cs" />
+    <Compile Include="WPF\GridLengthConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">

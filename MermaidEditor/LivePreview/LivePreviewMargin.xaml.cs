@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MermaidEditor.Configuration;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Threading;
@@ -18,10 +18,12 @@ namespace MermaidEditor.LivePreview
 {
     public partial class LivePreviewMargin : UserControl, IWpfTextViewMargin, INotifyPropertyChanged
     {
+        private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");        
         private readonly IWpfTextView textView;
         private readonly string startupText;        
-        private static readonly string TempPath = Path.Combine(Path.GetTempPath(), "Mermaid.EditorForVisualStudio");
+        
         private string selectedExt = "png";
+        public double previewWidth = 900;
 
         public string SelectedExt
         {
@@ -31,9 +33,29 @@ namespace MermaidEditor.LivePreview
             }
             set
             {
-                selectedExt = value;
-                OnPropertyChanged();
-                TextBuffer_PostChanged(null, null);
+                if (selectedExt != value)
+                {
+                    selectedExt = value;
+                    OnPropertyChanged();
+                    TextBuffer_PostChanged(null, null);
+                    SaveConfiguration();
+                }
+            }
+        }
+        public double PreviewWidth
+        {
+            get
+            {
+                return previewWidth;
+            }
+            set
+            {
+                if (previewWidth != value)
+                {
+                    previewWidth = value;
+                    OnPropertyChanged();
+                    SaveConfiguration();
+                }
             }
         }
 
@@ -52,8 +74,9 @@ namespace MermaidEditor.LivePreview
             InitializeComponent();
             this.Loaded += LivePreviewMargin_Loaded;           
             this.DataContext = this;
+            LoadConfiguration();
         }
-       
+        
 
         bool isInitialized = false;
         private void LivePreviewMargin_Loaded(object sender, RoutedEventArgs e)
@@ -64,17 +87,32 @@ namespace MermaidEditor.LivePreview
                 isInitialized = true;
             }
         }
-     
 
-        async Task InitializeAsync()
+
+        private void LoadConfiguration()
+        {
+            ConfigurationManager.Load();
+            SelectedExt = ConfigurationManager.Configuration.SelectedExt;
+            PreviewWidth = ConfigurationManager.Configuration.PreviewWidth;
+        }
+        private void SaveConfiguration()
+        {            
+            ConfigurationManager.Configuration.SelectedExt = SelectedExt;
+            ConfigurationManager.Configuration.PreviewWidth = PreviewWidth;
+            ConfigurationManager.Save();
+        }
+
+
+        private async Task InitializeAsync()
         {
             try
             {
-                DebugWriteLine($"0 InitializeAsync BEGIN");
+                Log($"TempPath = {TempPath}");
+                Log($"UserDataPath = {ConfigurationManager.UserDataPath}");
+
                 var env = await CoreWebView2Environment.CreateAsync(userDataFolder: TempPath);                 
                 await cWebView.EnsureCoreWebView2Async(env);
-
-                DebugWriteLine($"1 EnsureCoreWebView2Async END");
+                
                 var webViewRes = Path.Combine(Path.GetDirectoryName(typeof(LivePreviewMargin).Assembly.Location), "LivePreview");
                 cWebView.CoreWebView2.SetVirtualHostNameToFolderMapping("mermaideditor.example", webViewRes, CoreWebView2HostResourceAccessKind.Allow);
                
@@ -82,9 +120,7 @@ namespace MermaidEditor.LivePreview
           
                 cWebView.NavigationCompleted += WebView_NavigationCompleted;
                 cWebView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
-                cWebView.WebMessageReceived += CWebView_WebMessageReceived;
-
-                DebugWriteLine($"2 InitializeAsync END");
+                cWebView.WebMessageReceived += CWebView_WebMessageReceived;                
             }
             catch (WebView2RuntimeNotFoundException)
             {
@@ -93,15 +129,17 @@ namespace MermaidEditor.LivePreview
             }
         }
 
-        private void CoreWebView2_DOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
-        {
-            DebugWriteLine($"3 CoreWebView2_DOMContentLoaded");
-        }
+
         private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            DebugWriteLine($"4 WebView_NavigationCompleted");
+            Log("WebView_NavigationCompleted()");
             UpdateWebView(startupText);
         }
+        private void CoreWebView2_DOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
+        {
+            Log("CoreWebView2_DOMContentLoaded()");
+        }
+        
 
 
         private void TextBuffer_PostChanged(object sender, EventArgs e)
@@ -112,9 +150,9 @@ namespace MermaidEditor.LivePreview
                 UpdateWebView(text);
             }
         }
-        public void UpdateWebView(string text)
+        private void UpdateWebView(string text)
         {
-            if (cWebView.CoreWebView2 != null)
+            if (cWebView.IsWebViewAvailable())
             {
                 var enc = JsonEncodedText.Encode(text);
                 cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\", \"{SelectedExt}\");").Forget();
@@ -124,7 +162,7 @@ namespace MermaidEditor.LivePreview
 
         private async void SaveAsPNG_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (textView.IsTextViewAvailable() && cWebView.CoreWebView2 != null)
+            if (textView.IsTextViewAvailable() && cWebView.IsWebViewAvailable())
             {
                 var dataUrl = await cWebView.ExecuteScriptAsync($"getPNG();"); // result will be delivered through CWebView_WebMessageReceived
             }
@@ -161,7 +199,8 @@ namespace MermaidEditor.LivePreview
         #region IWpfTextViewMargin
         public FrameworkElement VisualElement => this;
         public double MarginSize => this.Width;
-        public bool Enabled => this.Enabled;        
+        public bool Enabled => this.Enabled;
+       
         public void Dispose()
         {
             textView.TextBuffer.PostChanged -= TextBuffer_PostChanged;
@@ -206,7 +245,13 @@ namespace MermaidEditor.LivePreview
         }
 
         #endregion     
-        
-        private void DebugWriteLine(string text) =>  Debug.WriteLine($"===> {text} " + DateTimeOffset.Now.ToString("hh:mm:ss.fff")); 
+         
+
+        private static void Log(string message)
+        {
+            string line = $"=ME4VS=> {DateTimeOffset.Now.ToString("hh:mm:ss.fff")}: {message}";
+            Trace.WriteLine(line);
+            Debug.WriteLine(line);
+        }
     }
 }
