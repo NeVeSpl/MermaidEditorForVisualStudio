@@ -24,7 +24,7 @@ namespace MermaidEditor.LivePreview
         private readonly string startupText;        
         
         private string selectedExt = "png";
-        public double previewWidth = 900;
+        public double previewWidth = 300;
 
         public string SelectedExt
         {
@@ -73,9 +73,9 @@ namespace MermaidEditor.LivePreview
         public LivePreviewMargin()
         {
             InitializeComponent();
-            this.Loaded += LivePreviewMargin_Loaded;           
-            this.DataContext = this;
+            this.Loaded += LivePreviewMargin_Loaded;
             LoadConfiguration();
+            this.DataContext = this;            
         }
         
 
@@ -93,8 +93,8 @@ namespace MermaidEditor.LivePreview
         private void LoadConfiguration()
         {
             ConfigurationManager.Load();
-            SelectedExt = ConfigurationManager.Configuration.SelectedExt;
-            PreviewWidth = ConfigurationManager.Configuration.PreviewWidth;
+            selectedExt = ConfigurationManager.Configuration.SelectedExt;
+            previewWidth = ConfigurationManager.Configuration.PreviewWidth;
         }
         private void SaveConfiguration()
         {            
