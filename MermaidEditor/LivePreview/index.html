@@ -3,8 +3,7 @@
 <head>	
     <style>
         body {
-            margin: 0;
-            width: fit-content;
+            margin: 0;              
         }
         .loader {
             border: 16px solid #f3f3f3; /* Light grey */
@@ -46,6 +45,20 @@
         #ui{
             display : none;
         }
+
+        #svgContainer {
+           
+        }
+        #mermaidGraph {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: auto;
+        }
+
+        svg#mermaidGraphInSVG {
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -84,7 +97,8 @@
         import mermaid from 'http://mermaideditor.example/mermaid.10.1.0/mermaid.esm.mjs'
         mermaid.initialize({ startOnLoad: false });
 
-        const sendMessage = function (msg) {
+        const sendMessage = function (msg)
+        {
             window.chrome.webview.postMessage(msg);
         }
 
@@ -169,11 +183,19 @@
             var img = canvas.toDataURL("image/png");
             console.log(img);
             if (save) {
-                sendMessage(img);
+                sendMessage("getPNG:" + img);
             }
             return img;
         }
         window.getPNG = getPNG;
+
+        export async function getSVG()
+        {
+            const myGraph = document.querySelector("#mermaidGraph");
+            let img = myGraph.innerHTML
+            sendMessage("getSVG:" + img);
+        }
+        window.getSVG = getSVG;
 
         mermaid.parseError = (error, hash) => {
             console.log("mermaid.parseError \r\n");

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -164,13 +165,32 @@ namespace MermaidEditor.LivePreview
         {
             if (textView.IsTextViewAvailable() && cWebView.IsWebViewAvailable())
             {
-                var dataUrl = await cWebView.ExecuteScriptAsync($"getPNG();"); // result will be delivered through CWebView_WebMessageReceived
+                var method = selectedExt == "png" ? "getPNG();" : "getSVG();";
+                var dataUrl = await cWebView.ExecuteScriptAsync(method); // result will be delivered through CWebView_WebMessageReceived
             }
         }
         private void CWebView_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            string dataUrl = e.TryGetWebMessageAsString();
-            SaveImage(dataUrl);
+            string response = e.TryGetWebMessageAsString();
+            Log("WebMessageReceived: " + response);
+
+            if (string.IsNullOrEmpty(response))
+                return;
+
+
+            var splited = response.Split(new[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
+            var prefix = splited[0];
+            var data = splited[1];
+
+            switch(prefix)
+            {
+                case "getPNG":
+                    SaveImage(data);
+                    break;
+                case "getSVG":
+                    SaveSvg(data);
+                    break;
+            }
         }
         private void SaveImage(string dataUrl)
         {
@@ -193,7 +213,16 @@ namespace MermaidEditor.LivePreview
                     }
                 }
             }
-        }     
+        }
+        private void SaveSvg(string data)
+        {
+            if (textView.IsTextViewAvailable())
+            {
+                var mmdPath = textView.TextBuffer.GetFileName();
+                var svgPath = Path.ChangeExtension(mmdPath, "svg");
+                File.WriteAllText(svgPath, data);
+            }
+        }
 
 
         #region IWpfTextViewMargin

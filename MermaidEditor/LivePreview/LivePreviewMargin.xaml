@@ -31,7 +31,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 
-                <Button Content="Save *.png file next to *.mmd file" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Click="SaveAsPNG_Button_Click" />
+                <Button Content="Save rendered diagram file next to *.mmd file" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Click="SaveAsPNG_Button_Click" />
                 <ComboBox Grid.Row="0" Grid.Column="1" Margin="7 0 0 0" SelectedValuePath="Content" SelectedValue="{Binding SelectedExt, Mode=TwoWay}">                    
                     <ComboBoxItem Content="svg" />
                     <ComboBoxItem Content="png" />
