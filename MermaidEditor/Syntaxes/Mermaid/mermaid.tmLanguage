@@ -511,7 +511,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -639,7 +639,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -664,7 +664,7 @@
 							</dict>
 							<dict>
 								<key>match</key>
-								<string>(dateFormat)\s+([\w-]+)</string>
+								<string>(dateFormat)\s+([\w\-\.]+)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -681,7 +681,7 @@
 							</dict>
 							<dict>
 								<key>match</key>
-								<string>(axisFormat)\s+([\w\%/-]+)</string>
+								<string>(axisFormat)\s+([\w\%\/\\\-\.]+)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -715,6 +715,40 @@
 							</dict>
 							<dict>
 								<key>match</key>
+								<string>(excludes)\s+((?:[\d\-,\s]+|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekends)+)</string>
+								<key>captures</key>
+								<dict>
+									<key>1</key>
+									<dict>
+										<key>name</key>
+										<string>keyword.control.mermaid</string>
+									</dict>
+									<key>2</key>
+									<dict>
+										<key>name</key>
+										<string>string</string>
+									</dict>
+								</dict>
+							</dict>
+							<dict>
+								<key>match</key>
+								<string>^\s+(todayMarker)\s+(.*)$</string>
+								<key>captures</key>
+								<dict>
+									<key>1</key>
+									<dict>
+										<key>name</key>
+										<string>keyword.control.mermaid</string>
+									</dict>
+									<key>2</key>
+									<dict>
+										<key>name</key>
+										<string>string</string>
+									</dict>
+								</dict>
+							</dict>
+							<dict>
+								<key>match</key>
 								<string>(section)\s+(\s*["\(\)$&amp;%\^/#.,?!;:*+=&lt;&gt;\'\\\-\w\s]*)</string>
 								<key>captures</key>
 								<dict>
@@ -732,7 +766,7 @@
 							</dict>
 							<dict>
 								<key>begin</key>
-								<string>\s(.*)(:)</string>
+								<string>^\s(.*)(:)</string>
 								<key>beginCaptures</key>
 								<dict>
 									<key>1</key>
@@ -766,7 +800,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -998,13 +1032,13 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
 						<string>Graph</string>
 						<key>begin</key>
-						<string>^\s*(graph|flowchart)\s+([A-Za-z\ 0-9]+)</string>
+						<string>^\s*(graph|flowchart)\s+([\p{Letter}\ 0-9]+)</string>
 						<key>beginCaptures</key>
 						<dict>
 							<key>1</key>
@@ -1028,7 +1062,7 @@
 							</dict>
 							<dict>
 								<key>match</key>
-								<string>\b(subgraph)\s+([A-Za-z\ 0-9]+)</string>
+								<string>\b(subgraph)\s+([\p{Letter}\ 0-9]+)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1384,7 +1418,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -1454,7 +1488,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -1534,7 +1568,7 @@
 								<key>comment</key>
 								<string>(activate/deactivate)(Actor)</string>
 								<key>match</key>
-								<string>\s*((?:de)?activate)\s+(\b["\(\)$&amp;%\^/#.?!*=&lt;&gt;\'\\\w\s]+\b\s*)</string>
+								<string>\s*((?:de)?activate)\s+(\b["()$&amp;%^/#.?!*=&lt;&gt;'\\\w\s]+\b\)?\s*)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1553,7 +1587,7 @@
 								<key>comment</key>
 								<string>(Note)(direction)(Actor)(,)?(Actor)?(:)(Message)</string>
 								<key>match</key>
-								<string>\s*(Note)\s+((?:left|right)\sof|over)\s+(\b["\(\)$&amp;%\^/#.?!*=&lt;&gt;\'\\\w\s]+\b\s*)(,)?(\b["\(\)$&amp;%\^/#.?!*=&lt;&gt;\'\\\w\s]+\b\s*)?(:)(?:\s+([^;#]*))?</string>
+								<string>\s*(Note)\s+((?:left|right)\sof|over)\s+(\b["()$&amp;%^/#.?!*=&lt;&gt;'\\\w\s]+\b\)?\s*)(,)?(\b["()$&amp;%^/#.?!*=&lt;&gt;'\\\w\s]+\b\)?\s*)?(:)(?:\s+([^;#]*))?</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1649,7 +1683,7 @@
 								<key>comment</key>
 								<string>(Actor)(Arrow)(Actor)(:)(Message)</string>
 								<key>match</key>
-								<string>\s*(\b["\(\)$&amp;%\^/#.?!*=&lt;&gt;\'\\\w\s]+\b)\s*(-?-(?:\&gt;|x|\))\&gt;?[+-]?)\s*(["\(\)$&amp;%\^/#.?!*=&lt;&gt;\'\\\w\s]+\b)\s*(:)\s*([^;#]*)</string>
+								<string>\s*(\b["()$&amp;%^/#.?!*=&lt;&gt;'\\\w\s]+\b\)?)\s*(-?-(?:\&gt;|x|\))\&gt;?[+-]?)\s*(["()$&amp;%^/#.?!*=&lt;&gt;'\\\w\s]+\b\)?)\s*(:)\s*([^;#]*)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1681,7 +1715,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -2013,7 +2047,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 					<dict>
 						<key>comment</key>
@@ -2101,7 +2135,7 @@
 							</dict>
 						</array>
 						<key>end</key>
-						<string>(^|\G)(?=\s*[`~]{3,}\s*$)</string>
+						<string>(^|\G)(?=\s*[`:~]{3,}\s*$)</string>
 					</dict>
 				</array>
 			</dict>
