@@ -121,7 +121,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LivePreview\mermaid.10.6.0\*.*">
+    <Content Include="LivePreview\mermaid.10.7.0\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
