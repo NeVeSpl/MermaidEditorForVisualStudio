@@ -90,7 +90,7 @@
 								<key>comment</key>
 								<string>(class name) : (visibility)?(function)( (function param/generic param)? )(classifier)? (return/generic return)?$</string>
 								<key>match</key>
-								<string>([\w-]+)\s?(:)\s([\+~#-])?([\w-]+)(\()([\w-]+)?(~)?([\w-]+)?(~)?\s?([\w-]+)?(\))([*\$])?\s?([\w-]+)?(~)?([\w-]+)?(~)?$</string>
+								<string>([\w-]+)\s?(:)\s([\+~#-])?([\w-]+)(\()([\w-]+)?(~)?([\w-]+)?(~)?\s?([\w-]+)?(\))([*\$]{0,2})\s?([\w-]+)?(~)?([\w-]+)?(~)?$</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -360,7 +360,7 @@
 											</dict>
 										</array>
 										<key>end</key>
-										<string>(\))([*\$])?\s?([\w-]+)?(~)?([\w-]+)?(~)?$</string>
+										<string>(\))([*\$]{0,2})\s?([\w-]+)?(~)?([\w-]+)?(~)?$</string>
 										<key>endCaptures</key>
 										<dict>
 											<key>1</key>
@@ -546,7 +546,7 @@
 								<key>comment</key>
 								<string>(entity) {</string>
 								<key>begin</key>
-								<string>\s+([\w-]+)\s+({)</string>
+								<string>\s+([\w-]+)\s*({)</string>
 								<key>beginCaptures</key>
 								<dict>
 									<key>1</key>
@@ -591,6 +591,12 @@
 											</dict>
 										</dict>
 									</dict>
+									<dict>
+										<key>match</key>
+										<string>\%%.*</string>
+										<key>name</key>
+										<string>comment</string>
+									</dict>
 								</array>
 								<key>end</key>
 								<string>(})</string>
@@ -607,7 +613,7 @@
 								<key>comment</key>
 								<string>(entity) (relationship) (entity) : (label)</string>
 								<key>match</key>
-								<string>\s*([\w-]+)\s+((?:\|o|\|\||}o|}\|)(?:..|--)(?:o\||\|\||o{|\|{))\s+([\w-]+)\s+(:)\s+((?:"[\w\s]*")|(?:[\w-]+))</string>
+								<string>\s*([\w-]+)\s*((?:\|o|\|\||}o|}\||one or (?:zero|more|many)|zero or (?:one|more|many)|many\((?:0|1)\)|only one|0\+|1\+?)(?:..|--)(?:o\||\|\||o{|\|{|one or (?:zero|more|many)|zero or (?:one|more|many)|many\((?:0|1)\)|only one|0\+|1\+?))\s*([\w-]+)\s*(:)\s*((?:"[\w\s]*")|(?:[\w-]+))</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1662,9 +1668,9 @@
 							</dict>
 							<dict>
 								<key>comment</key>
-								<string>(alt/else/opt/par/and/autonumber)(text)</string>
+								<string>(alt/else/option/par/and/autonumber/critical/opt)(text)</string>
 								<key>match</key>
-								<string>\s*(alt|else|opt|par|and|rect|autonumber)(?:\s+([^#;]*))?</string>
+								<string>\s*(alt|else|option|par|and|rect|autonumber|critical|opt)(?:\s+([^#;]*))?</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -1707,6 +1713,49 @@
 										<string>keyword.control.mermaid</string>
 									</dict>
 									<key>5</key>
+									<dict>
+										<key>name</key>
+										<string>string</string>
+									</dict>
+								</dict>
+							</dict>
+							<dict>
+								<key>comment</key>
+								<string>(box transparent text)</string>
+								<key>match</key>
+								<string>\s*(box)\s+(transparent)(?:\s+([^;#]*))?</string>
+								<key>captures</key>
+								<dict>
+									<key>1</key>
+									<dict>
+										<key>name</key>
+										<string>keyword.control.mermaid</string>
+									</dict>
+									<key>2</key>
+									<dict>
+										<key>name</key>
+										<string>entity.name.function.mermaid</string>
+									</dict>
+									<key>3</key>
+									<dict>
+										<key>name</key>
+										<string>string</string>
+									</dict>
+								</dict>
+							</dict>
+							<dict>
+								<key>comment</key>
+								<string>(box text)</string>
+								<key>match</key>
+								<string>\s*(box)(?:\s+([^;#]*))?</string>
+								<key>captures</key>
+								<dict>
+									<key>1</key>
+									<dict>
+										<key>name</key>
+										<string>keyword.control.mermaid</string>
+									</dict>
+									<key>2</key>
 									<dict>
 										<key>name</key>
 										<string>string</string>
