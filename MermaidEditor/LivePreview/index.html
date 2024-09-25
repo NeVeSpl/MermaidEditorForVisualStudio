@@ -59,6 +59,20 @@
             max-width: 100% !important;
             max-height: 100% !important;
         }
+
+        .theme-default
+        {
+            background-color : #fff;
+        }
+        .theme-dark {
+            background-color: #2A303C;
+        }
+        .theme-neutral {
+            background-color: #FDFDFD;
+        }
+        .theme-forest {
+            background-color: #FAF7F5;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +83,7 @@
     </div>
 
     <div id="ui">
-        <textarea rows="10" cols="100" id="myCode" style="display : none">    
+        <textarea rows="10" cols="100" id="myCode" style="display : none" >    
         graph TD
         A[Client] --> B[Load Balancer]
         B --> C[Server01]
@@ -90,20 +104,25 @@
             <canvas></canvas>
         </div>
     </div>
+
     <!--<script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.2-rc.1/dist/mermaid.js"></script>-->
     <!--<script src="mermaid.js"></script>-->
     <script type="module">
         /*import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.0.0/+esm'*/
         import mermaid from 'http://mermaideditor.example/mermaid.11.2.1/mermaid.esm.mjs'
-        mermaid.initialize({ startOnLoad: false });
+        mermaid.initialize({ startOnLoad: false, theme: 'default'});
 
         const sendMessage = function (msg)
         {
             window.chrome.webview.postMessage(msg);
         }
 
-        export async function updateGraph(graphDefinition, imageExt) {
+        export async function updateGraph(graphDefinition, imageExt, theme) {
             console.log("updateGraph invoked()")
+
+        
+            mermaid.initialize({ startOnLoad: false, theme: theme});          
+            document.documentElement.setAttribute("class", `theme-${theme}`);
 
             const svgContainerElement = document.getElementById("svgContainer");
             const pngContainerElement = document.getElementById("pngContainer");
@@ -117,6 +136,8 @@
 
             const myGraph = document.querySelector("#mermaidGraph");
             const myErrors = document.querySelector("#mermaidErrors");
+
+            //mermaid.mermaidAPI.th
 
             try
             {

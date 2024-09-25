@@ -19,34 +19,44 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition x:Name="contentColumn" MinWidth="25" Width="{Binding PreviewWidth, Mode=TwoWay, Delay=1000, Converter={StaticResource GridLengthConverter}}"/>
         </Grid.ColumnDefinitions>
+        
         <GridSplitter Grid.Column="1" ResizeDirection="Columns" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Width="5" DragDelta="GridSplitter_DragDelta" DragCompleted="GridSplitter_DragCompleted"  />
-        <DockPanel x:Name="DockWrapper" Grid.Column="2"   LastChildFill="True">
-            <Grid DockPanel.Dock="Top">
+
+        <DockPanel x:Name="DockWrapper" Grid.Column="2"   LastChildFill="True" Background="#E8E8EC">
+            <Grid DockPanel.Dock="Top" Margin="0 1 0 2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="0.3*" MinWidth="30"/>
                     <ColumnDefinition Width="0.3*" MinWidth="30"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+
+                <Button Content="Save rendered diagram" ToolTip="Save rendered diagram file next to *.mmd file" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Click="SaveAsPNG_Button_Click" />
                 
-                <Button Content="Save rendered diagram file next to *.mmd file" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Click="SaveAsPNG_Button_Click" />
                 <ComboBox Grid.Row="0" Grid.Column="1" Margin="7 0 0 0" SelectedValuePath="Content" SelectedValue="{Binding SelectedExt, Mode=TwoWay}">                    
                     <ComboBoxItem Content="svg" />
                     <ComboBoxItem Content="png" />
                 </ComboBox>
+                
+                <ComboBox Grid.Row="0" Grid.Column="2" Margin="7 0 0 0" SelectedValuePath="Content" SelectedValue="{Binding SelectedTheme, Mode=TwoWay}">
+                    <ComboBoxItem Content="default" />
+                    <ComboBoxItem Content="dark" />
+                    <ComboBoxItem Content="neutral" />
+                    <ComboBoxItem Content="forest" />              
+                </ComboBox>
             </Grid>
+            
             <TextBlock TextWrapping="Wrap" x:Name="cMsgWebView2NotInstalled" Visibility="Collapsed" DockPanel.Dock="Top">      
                 <Run>To see preview you need to have installed WebView2 Runtime from </Run>
                 <Hyperlink NavigateUri="https://developer.microsoft.com/en-us/microsoft-edge/webview2/" RequestNavigate="Hyperlink_RequestNavigate">
                  https://developer.microsoft.com/en-us/microsoft-edge/webview2/
                 </Hyperlink>
-            </TextBlock>
+            </TextBlock>          
 
-          
-
-            <wv2:WebView2 Name="cWebView" Panel.ZIndex="2" Margin="0 7 0 0"/>
+            <wv2:WebView2 Name="cWebView" Panel.ZIndex="2" Margin="0 0 0 0"/>
         </DockPanel>
     </Grid>
 </UserControl>

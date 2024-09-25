@@ -25,6 +25,7 @@ namespace MermaidEditor.LivePreview
         
         private string selectedExt = "png";
         public double previewWidth = 300;
+        private string selectedTheme = "default";
 
         public string SelectedExt
         {
@@ -59,6 +60,23 @@ namespace MermaidEditor.LivePreview
                 }
             }
         }
+        public string SelectedTheme
+        {
+            get
+            {
+                return selectedTheme;
+            }
+            set
+            {
+                if (selectedTheme != value)
+                {
+                    selectedTheme = value;
+                    OnPropertyChanged();
+                    TextBuffer_PostChanged(null, null);
+                    SaveConfiguration();
+                }
+            }
+        }
 
 
         public LivePreviewMargin(IWpfTextView textView) : this(textView.TextSnapshot.GetText())
@@ -72,9 +90,9 @@ namespace MermaidEditor.LivePreview
         }
         public LivePreviewMargin()
         {
-            InitializeComponent();
-            this.Loaded += LivePreviewMargin_Loaded;
             LoadConfiguration();
+            InitializeComponent();            
+            this.Loaded += LivePreviewMargin_Loaded;            
             this.DataContext = this;            
         }
         
@@ -95,11 +113,13 @@ namespace MermaidEditor.LivePreview
             ConfigurationManager.Load();
             selectedExt = ConfigurationManager.Configuration.SelectedExt;
             previewWidth = ConfigurationManager.Configuration.PreviewWidth;
+            selectedTheme = ConfigurationManager.Configuration.Theme;
         }
         private void SaveConfiguration()
         {            
             ConfigurationManager.Configuration.SelectedExt = SelectedExt;
             ConfigurationManager.Configuration.PreviewWidth = PreviewWidth;
+            ConfigurationManager.Configuration.Theme = selectedTheme;
             ConfigurationManager.Save();
         }
 
@@ -156,7 +176,7 @@ namespace MermaidEditor.LivePreview
             if (cWebView.IsWebViewAvailable())
             {
                 var enc = JsonEncodedText.Encode(text);
-                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\", \"{SelectedExt}\");").Forget();
+                cWebView.ExecuteScriptAsync($"updateGraph(\"{enc}\", \"{SelectedExt}\", \"{SelectedTheme}\");").Forget();
             }
         }
 
