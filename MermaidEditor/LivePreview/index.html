@@ -51,7 +51,7 @@
         }
         #mermaidGraph {
             height: 100vh;
-            max-height: 100vh;
+           /* max-height: 100vh;*/
             overflow: auto;
         }
 
@@ -199,6 +199,18 @@
 
             canvas.width = width ?? svgElem.clientWidth;
             canvas.height = height ?? svgElem.clientHeight;
+
+            const myGraph = document.querySelector("#mermaidGraph");
+            if (width > 666 || height > 666)
+            {
+                myGraph.style.width = canvas.width + "px";
+                myGraph.style.height = canvas.height + "px";
+            }
+            else
+            {
+                myGraph.style.width = null;
+                myGraph.style.height = null;
+            }
 
             await drawInlineSVG(svgElem, ctx);
             var img = canvas.toDataURL("image/png");
