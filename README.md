@@ -2,11 +2,14 @@
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/NeVeS.MermaidEditorForVisualStudio?color=%230429FF&label=Mermaid%20editor)](https://marketplace.visualstudio.com/items?itemName=NeVeS.MermaidEditorForVisualStudio)
 
-A very simple editor for Mermaid files(*.mmd, *.mermaid) in Visual Studio. You can download it from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=NeVeS.MermaidEditorForVisualStudio). 
-- live preview 
-- generates diagrams in *.svg and *.png formats. 
-- syntax highlighting
-- displays parsing errors
+A lightweight editor for Mermaid files (`*.mmd`, `*.mermaid`) in Visual Studio, offering:
+
+- **Live preview** to instantly see rendered diagrams
+- **Export options** for generating diagrams in `*.svg` and `*.png` formats
+- **Syntax highlighting** for better readability and editing
+- **Error detection** to display parsing issues
+
+You can download it from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=NeVeS.MermaidEditorForVisualStudio). 
 
 ![NTypewriter LivePreview](Documentation/MermaidEditorForVisualStudio.sampleusecase.gif)
 
