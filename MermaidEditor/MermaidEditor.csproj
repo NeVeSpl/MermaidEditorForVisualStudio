@@ -50,6 +50,7 @@
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="ContentTypeAndFileExtensionDefinitions.cs" />
     <Compile Include="Extensions\Microsoft.VisualStudio.Text.Editor\IWpfTextViewExtensions.cs" />
+    <Compile Include="Extensions\Microsoft.VisualStudio.Text\ITextBufferExtensions.cs" />
     <Compile Include="Extensions\Microsoft.Web.WebView2.Core\WebView2Extensions.cs" />
     <Compile Include="Extensions\System\StringExtensions.cs" />
     <Compile Include="LivePreview\LivePreviewMargin.xaml.cs">
@@ -75,9 +76,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Community.VisualStudio.Toolkit.eN">
-      <HintPath>binaries\Community.VisualStudio.Toolkit\Community.VisualStudio.Toolkit.eN.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
