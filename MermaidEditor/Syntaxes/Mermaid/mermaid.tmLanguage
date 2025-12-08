@@ -764,7 +764,7 @@
 								<key>comment</key>
 								<string>(entity) {</string>
 								<key>begin</key>
-								<string>(?i)\s+([\w-]+)\s*(\[)?\s*((?:[\w-]+)|(?:"[\w\s-]+"))?\s*(\])?\s*({)</string>
+								<string>(?i)\s*([\w-]+)\s*(\[)?\s*((?:[\w-]+)|(?:"[\w\s-]+"))?\s*(\])?\s*({)</string>
 								<key>beginCaptures</key>
 								<dict>
 									<key>1</key>
@@ -797,9 +797,9 @@
 								<array>
 									<dict>
 										<key>comment</key>
-										<string>(type) (name) (PK|FK)? ("comment")?</string>
+										<string>(type) (name) (constraints)? ("comment")?</string>
 										<key>match</key>
-										<string>(?i)\s*([\w-]+)\s+([\w-]+)\s+(PK|FK)?\s*("["\($&amp;%\^/#.,?!;:*+=&lt;&gt;\'\\\-\w\s]*")?\s*</string>
+										<string>(?i)\s*([\w-]+)\s+([\w-]+)\s+([PFU]K(?:,\s*[PFU]K){0,2})?\s*("[^"\r\n]*")?\s*</string>
 										<key>captures</key>
 										<dict>
 											<key>1</key>
@@ -1503,7 +1503,7 @@
 								<key>comment</key>
 								<string>(Graph Link)("Multiline text")(Graph Link)</string>
 								<key>begin</key>
-								<string>(?i)\s*((?:-{2,5}|={2,5})[xo&gt;]?\|)</string>
+								<string>(?i)\s*((?:-?\.{1,4}-|-{2,5}|={2,5})[xo&gt;]?\|)</string>
 								<key>beginCaptures</key>
 								<dict>
 									<key>1</key>
@@ -1626,7 +1626,7 @@
 								<key>comment</key>
 								<string>(Graph Link)</string>
 								<key>match</key>
-								<string>(?i)\s*([ox&lt;]?(?:-.{1,3}-|-{1,3}|={1,3})[ox&gt;]?)</string>
+								<string>(?i)\s*([ox&lt;]?(?:-?\.{1,4}-|-{1,4}|={1,4})[ox&gt;]?)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -2589,6 +2589,23 @@
 								<string>comment</string>
 							</dict>
 							<dict>
+								<key>match</key>
+								<string>^(?i)\s*(direction)\s+(BT|RL|TB|LR)</string>
+								<key>captures</key>
+								<dict>
+									<key>1</key>
+									<dict>
+										<key>name</key>
+										<string>keyword.control.mermaid</string>
+									</dict>
+									<key>2</key>
+									<dict>
+										<key>name</key>
+										<string>entity.name.function.mermaid</string>
+									</dict>
+								</dict>
+							</dict>
+							<dict>
 								<key>comment</key>
 								<string>}</string>
 								<key>match</key>
@@ -2628,7 +2645,7 @@
 								<key>comment</key>
 								<string>(state) : (description)</string>
 								<key>match</key>
-								<string>(?i)([\w-]+)\s+(:)\s+(\s*[-\w\s]+\b)</string>
+								<string>(?i)([\w-]+)\s*(:)\s*(\s*[^:]+)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -2665,9 +2682,9 @@
 								<array>
 									<dict>
 										<key>comment</key>
-										<string>"(description)" as (state)</string>
+										<string>"(description)" as (state) ({)</string>
 										<key>match</key>
-										<string>(?i)\s*("[-\w\s]+\b")\s+(as)\s+([\w-]+)</string>
+										<string>(?i)\s*("[^"]+")\s*(as)\s+([\w-]+)\s*({)?</string>
 										<key>captures</key>
 										<dict>
 											<key>1</key>
@@ -2685,11 +2702,16 @@
 												<key>name</key>
 												<string>variable</string>
 											</dict>
+											<key>4</key>
+											<dict>
+												<key>name</key>
+												<string>keyword.control.mermaid</string>
+											</dict>
 										</dict>
 									</dict>
 									<dict>
 										<key>comment</key>
-										<string>(state name) {</string>
+										<string>(state name) ({)</string>
 										<key>match</key>
 										<string>(?i)\s*([\w-]+)\s+({)</string>
 										<key>captures</key>
@@ -2733,7 +2755,7 @@
 								<key>comment</key>
 								<string>(state) --&gt;</string>
 								<key>begin</key>
-								<string>(?i)([\w-]+)\s+(--&gt;)</string>
+								<string>(?i)([\w-]+)\s*(--&gt;)</string>
 								<key>beginCaptures</key>
 								<dict>
 									<key>1</key>
@@ -2753,7 +2775,7 @@
 										<key>comment</key>
 										<string>(state) (:)? (transition text)?</string>
 										<key>match</key>
-										<string>(?i)\s+([\w-]+)\s*(:)?\s*([^\n:]+)?</string>
+										<string>(?i)\s*([\w-]+)\s*(:)?\s*([^\n:]+)?</string>
 										<key>captures</key>
 										<dict>
 											<key>1</key>
@@ -2805,7 +2827,7 @@
 								<key>comment</key>
 								<string>[*] --&gt; (state) (:)? (transition text)?</string>
 								<key>match</key>
-								<string>(?i)(\[\*\])\s+(--&gt;)\s+([\w-]+)\s*(:)?\s*([^\n:]+)?</string>
+								<string>(?i)(\[\*\])\s*(--&gt;)\s*([\w-]+)\s*(:)?\s*([^\n:]+)?</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
@@ -2839,7 +2861,7 @@
 								<key>comment</key>
 								<string>note left|right of (state name)</string>
 								<key>match</key>
-								<string>(?i)^\s*(note (?:left|right) of)\s+([\w-]+)\s+(:)\s*([^\n:]+)</string>
+								<string>(?i)^\s*(note (?:left|right) of)\s+([\w-]+)\s*(:)\s*([^\n:]+)</string>
 								<key>captures</key>
 								<dict>
 									<key>1</key>
