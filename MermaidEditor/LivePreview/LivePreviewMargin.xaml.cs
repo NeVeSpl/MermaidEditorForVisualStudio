@@ -248,7 +248,7 @@ namespace MermaidEditor.LivePreview
         #region IWpfTextViewMargin
         public FrameworkElement VisualElement => this;
         public double MarginSize => this.Width;
-        public bool Enabled => this.Enabled;
+        public bool Enabled => true;
        
         public void Dispose()
         {
